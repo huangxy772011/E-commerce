@@ -1,0 +1,1 @@
+ALTER TABLE customer ADD COLUMN username varchar(255) not null;

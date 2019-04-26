@@ -1,0 +1,2 @@
+ALTER TABLE inventory ADD COLUMN vendor_id bigint DEFAULT NULL;
+ALTER TABLE inventory ADD CONSTRAINT fk_inventory_vendor FOREIGN KEY (vendor_id) REFERENCES vendor (id) ON DELETE NO ACTION ON UPDATE NO ACTION
