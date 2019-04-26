@@ -2,21 +2,48 @@ package com.ascending.famulei.config;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.hibernate.jpa.HibernatePersistenceProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
+@EnableTransactionManagement
+@EnableJpaRepositories(basePackages = "com.ascending.famulei.repository")
 public class DatabaseConfig {
-    private String databaseUrl = "jdbc:postgresql://localhost:5431/famulei";
-    private String databaseUserName = "admin";
-    private String databasePassword = "password";
-    private String driverClassName = "org.postgresql.ds.PGSimpleDataSource";
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+//    private String databaseUrl = "jdbc:postgresql://localhost:5431/famulei";
+//    private String databaseUserName = "admin";
+//    private String databasePassword = "password";
+//    private String driverClassName = "org.postgresql.ds.PGSimpleDataSource";
+
+    @Value("${database.serverName}")
+    protected String databaseUrl; //databaseUrl:"jdbc:postgresql://localhost:5431/famulei_dev"
+
+    @Value("${database.userName}")
+    protected String databaseUserName; //databaseUserName:"admin"
+
+    @Value("${database.password}")
+    protected String databasePassword; //databasePassword:"password"
+
+//    @Value("#{shareProperties['database.driverClassName']")
+    @Value("#{shareProperties['database.driverClassName']}")
+    protected String driverClassName; //driverClassName:"org.postgresql.ds.PGSimpleDataSource"
+
+
 
     @Bean(name = "dataSource")
     public DataSource getDataSource() {
@@ -41,6 +68,17 @@ public class DatabaseConfig {
 
         return factoryBean;
     }
+
+    @Bean(name="transactionManager")
+    public PlatformTransactionManager transactionManager(@Qualifier("entityManagerFactory") EntityManagerFactory entityManagerFactory, @Autowired DataSource dataSource){
+        JpaTransactionManager transactionManager = new JpaTransactionManager();
+        transactionManager.setEntityManagerFactory(entityManagerFactory);
+        transactionManager.setDataSource(dataSource);
+        return transactionManager;
+
+    }
+
+
 
     private BasicDataSource createDataSource() {
         BasicDataSource dataSource = new BasicDataSource();

@@ -2,6 +2,8 @@ package com.ascending.famulei.domain;
 
 import javax.persistence.*;
 
+import java.util.List;
+
 import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity
@@ -26,4 +28,9 @@ public class Customer {
 
     @Column(name = "address")
     private String address;
+
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer", cascade = CascadeType.ALL)
+    private List<Orders> orders;
+
 }

@@ -2,6 +2,8 @@ package com.ascending.famulei.domain;
 
 import javax.persistence.*;
 
+import java.util.List;
+
 import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity
@@ -27,6 +29,19 @@ public class Vendor {
     @Column(name = "location")
     private String location;
 
-    @Column(name = "inventory")
-    private int inventory;
+    @Column(name = "amount")
+    private int amount;
+
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "vendor", cascade = CascadeType.ALL)
+    private List<Inventory> inventory;
+
+//    public void setDepartment(String food) {
+//        this.department = food;
+//    }
+//
+//    public Long getId() {
+//        return this.id;
+//    }
 }
+
